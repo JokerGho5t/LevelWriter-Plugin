@@ -13,7 +13,7 @@ class LEVELWRITER_API ULWComponent : public USceneComponent
 public:
 	ULWComponent();
 
-	UPROPERTY(Instanced, EditAnywhere, Category = "LevelWriter")
+	UPROPERTY(Instanced, EditAnywhere, Category = "LevelWriter", meta = (ShowOnlyInnerProperties))
 	TArray<TObjectPtr<ULWEventScript>> Events;
 
 	virtual void BeginPlay() override;
@@ -24,6 +24,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LevelWriter")
 	void AbortAllEvents();
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+	
 #if WITH_EDITORONLY_DATA
 	
 	UPROPERTY()

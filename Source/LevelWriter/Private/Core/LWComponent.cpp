@@ -17,7 +17,7 @@ ULWComponent::ULWComponent()
 	{
 		EditorSprite->SetupAttachment(this);
 		
-		static ConstructorHelpers::FObjectFinder<UTexture2D> SpriteTexture(TEXT("/LevelWriter/Icons/Icon128.Icon128"));
+		static ConstructorHelpers::FObjectFinder<UTexture2D> SpriteTexture(TEXT("/LevelWriter/Icons/T_LWIcon"));
 		if (SpriteTexture.Succeeded())
 		{
 			EditorSprite->Sprite = SpriteTexture.Object;
@@ -28,7 +28,7 @@ ULWComponent::ULWComponent()
 
 		EditorSprite->SetDepthPriorityGroup(SDPG_Foreground);
 		
-		EditorSprite->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+		EditorSprite->SetRelativeLocation(FVector(0.0f, 0.0f, 120.0f));
 	}
 #endif
 }
@@ -72,3 +72,21 @@ void ULWComponent::AbortAllEvents()
 		if (Event) Event->AbortScript();
 	}
 }
+
+#if WITH_EDITOR
+void ULWComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(ULWComponent, Events))
+	{
+		for (int32 i = 0; i < Events.Num(); ++i)
+		{
+			if (!Events[i])
+			{
+				Events[i] = NewObject<ULWEventScript>(this, ULWEventScript::StaticClass(), NAME_None, RF_Transactional);
+			}
+		}
+	}
+}
+#endif
