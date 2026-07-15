@@ -27,24 +27,12 @@ public:
 
 	UPROPERTY(Instanced, EditAnywhere, Category = "Triggers", meta=(ToolTip = "Triggers that will start this event"))
 	TArray<TObjectPtr<ULWTrigger>> Triggers;
-	
-	UPROPERTY(EditAnywhere, Category = "Conditions", meta=(ToolTip = "AND - ALL conditions must be met\nOR - AT LEAST ONE"))
-	ELWLogicOperand ConditionOperand = ELWLogicOperand::AND;
 
 	UPROPERTY(Instanced, EditAnywhere, Category = "Conditions", meta=(ToolTip = "Conditions to check before starting actions"))
 	TArray<TObjectPtr<ULWCondition>> Conditions;
 
-	UPROPERTY(EditAnywhere, Category = "Execution", meta = (ToolTip = "If true, the script will run only once. To restart, you need call ResetDoOnce function"))
-	bool bExecuteOnce = false;
-	
-	UPROPERTY(EditAnywhere, Category = "Execution", meta=(ToolTip = "Sequential - actions execute one by one\nParallel - all execute at once"))
-	ELWExecutionMode ExecutionMode = ELWExecutionMode::Sequential;
-
-	UPROPERTY(EditAnywhere, Category = "Execution", meta = (EditCondition = "ExecutionMode == ELWExecutionMode::Parallel", EditConditionHides, ToolTip = "ALL - waits for all actions to finish\nANY - finishes when at least one action finishes (interrupting others)"))
-	ELWParallelMode ParallelMode = ELWParallelMode::ALL;
-
-	UPROPERTY(EditAnywhere, Category = "Execution", meta=(ToolTip = "Number of times to repeat the actions\n-1 - infinite loop\n1 - single execution"))
-	int32 LoopCount = 1;
+	UPROPERTY(EditAnywhere, Category = "Execution Rules", meta = (ShowOnlyInnerProperties))
+	FLWEventConfig Config;
 
 	UPROPERTY(Instanced, EditAnywhere, Category = "Actions", meta=(ToolTip = "Actions to execute"))
 	TArray<TObjectPtr<ULWAction>> Actions;

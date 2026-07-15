@@ -38,7 +38,7 @@ bool ULWEventScript::CheckConditions(AActor* Instigator)
 	bool bResult = Conditions[0]->CheckCondition(Instigator);
 	for (int32 i = 1; i < Conditions.Num(); ++i)
 	{
-		if (ConditionOperand == ELWLogicOperand::AND)
+		if (Config.ConditionOperand == ELWLogicOperand::AND)
 			bResult &= Conditions[i]->CheckCondition(Instigator);
 		else
 			bResult |= Conditions[i]->CheckCondition(Instigator);
@@ -48,7 +48,7 @@ bool ULWEventScript::CheckConditions(AActor* Instigator)
 
 void ULWEventScript::TryExecute(AActor* Instigator)
 {
-	if (bIsExecuting || Actions.IsEmpty() || !CheckConditions(Instigator) || (bExecuteOnce && bWasExecuted)) return;
+	if (bIsExecuting || Actions.IsEmpty() || !CheckConditions(Instigator) || (Config.bExecuteOnce && bWasExecuted)) return;
 
 	CurrentInstigator = Instigator;
 	CurrentLoop = 0;
@@ -60,7 +60,7 @@ void ULWEventScript::StartIteration()
 {
 	if (Actions.IsEmpty()) { CompleteIteration(false); return; }
 
-	if (ExecutionMode == ELWExecutionMode::Parallel)
+	if (Config.ExecutionMode == ELWExecutionMode::Parallel)
 	{
 		PendingParallelCount = Actions.Num();
 		for (ULWAction* Action : Actions)
@@ -112,11 +112,11 @@ void ULWEventScript::OnActionFinished(ULWAction* Action, bool bSuccess)
 
 	if (!bIsExecuting) return;
 
-	if (ExecutionMode == ELWExecutionMode::Parallel)
+	if (Config.ExecutionMode == ELWExecutionMode::Parallel)
 	{
 		PendingParallelCount--;
 
-		if (ParallelMode == ELWParallelMode::ANY)
+		if (Config.ParallelMode == ELWParallelMode::ANY)
 		{
 			for (ULWAction* OtherAction : Actions)
 			{
@@ -153,7 +153,7 @@ void ULWEventScript::CompleteIteration(bool bSuccess)
 
 	CurrentLoop++;
 	
-	if (bSuccess && (LoopCount < 0 || CurrentLoop < LoopCount))
+	if (bSuccess && (Config.LoopCount < 0 || CurrentLoop < Config.LoopCount))
 	{
 		if (UWorld* World = GetWorld())
 		{
@@ -172,7 +172,7 @@ void ULWEventScript::CompleteIteration(bool bSuccess)
 
 void ULWEventScript::FinishScript(bool bSuccess)
 {
-	if (bSuccess && bExecuteOnce)
+	if (bSuccess && Config.bExecuteOnce)
 	{
 		bWasExecuted = true;
 	}
@@ -228,16 +228,15 @@ void ULWEventScript::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 	{
 		if (Template)
 		{
-			bExecuteOnce = Template->bExecuteOnce;
-			ConditionOperand = Template->ConditionOperand;
-			ExecutionMode = Template->ExecutionMode;
-			ParallelMode = Template->ParallelMode;
-			LoopCount = Template->LoopCount;
-
-			Triggers.Empty(); Conditions.Empty(); Actions.Empty();
-			for (auto& Cls : Template->TriggerClasses) if (Cls) Triggers.Add(NewObject<ULWTrigger>(this, Cls));
-			for (auto& Cls : Template->ConditionClasses) if (Cls) Conditions.Add(NewObject<ULWCondition>(this, Cls));
-			for (auto& Cls : Template->ActionClasses) if (Cls) Actions.Add(NewObject<ULWAction>(this, Cls));
+			if (Template)
+            		{
+            			Config = Template->Config;
+            
+            			Triggers.Empty(); Conditions.Empty(); Actions.Empty();
+            			for (auto& Cls : Template->TriggerClasses) if (Cls) Triggers.Add(NewObject<ULWTrigger>(this, Cls));
+            			for (auto& Cls : Template->ConditionClasses) if (Cls) Conditions.Add(NewObject<ULWCondition>(this, Cls));
+            			for (auto& Cls : Template->ActionClasses) if (Cls) Actions.Add(NewObject<ULWAction>(this, Cls));
+            		}
 		}
 	}
 }
@@ -289,15 +288,11 @@ void ULWEventScript::ExecuteSaveToTemplate()
 		if (Decision != EAppReturnType::Yes) return;
 	}
 
-	Template->bExecuteOnce = bExecuteOnce;
-	Template->ConditionOperand = ConditionOperand;
-	Template->ExecutionMode = ExecutionMode;
-	Template->ParallelMode = ParallelMode;
-	Template->LoopCount = LoopCount;
+	Template->Config = Config;
 
-	Template->TriggerClasses.Empty();
-	Template->ConditionClasses.Empty();
-	Template->ActionClasses.Empty();
+    Template->TriggerClasses.Empty();
+    Template->ConditionClasses.Empty();
+    Template->ActionClasses.Empty();
 
 	for (ULWTrigger* Trig : Triggers) if (Trig) Template->TriggerClasses.Add(Trig->GetClass());
 	for (ULWCondition* Cond : Conditions) if (Cond) Template->ConditionClasses.Add(Cond->GetClass());
