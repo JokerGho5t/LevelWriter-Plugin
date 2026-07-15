@@ -6,7 +6,7 @@
 
 class ULWEventScript;
 
-UCLASS(ClassGroup= "LevelWriter", DisplayName= "LevelWriter Component", meta=(BlueprintSpawnableComponent, PrioritizeCategories="LevelWriter"))
+UCLASS(ClassGroup= "LevelWriter", DisplayName= "LevelWriter Component", meta=(BlueprintSpawnableComponent, PrioritizeCategories="LevelWriter", DisallowMultiple = "true"))
 class LEVELWRITER_API ULWComponent : public USceneComponent
 {
 	GENERATED_BODY()
