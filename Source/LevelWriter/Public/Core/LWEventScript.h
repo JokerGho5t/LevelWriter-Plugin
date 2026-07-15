@@ -25,16 +25,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Setup", meta = (DisplayName = "Save To Template (Click to Save)", ToolTip = "Saves the current settings to the selected template or create a new one"))
 	bool bSaveToTemplate = false;
 
-	UPROPERTY(Instanced, EditAnywhere, Category = "Triggers", meta=(ToolTip = "Triggers that will start this event"))
-	TArray<TObjectPtr<ULWTrigger>> Triggers;
-
-	UPROPERTY(Instanced, EditAnywhere, Category = "Conditions", meta=(ToolTip = "Conditions to check before starting actions"))
-	TArray<TObjectPtr<ULWCondition>> Conditions;
-
 	UPROPERTY(EditAnywhere, Category = "Execution Rules", meta = (ShowOnlyInnerProperties))
 	FLWEventConfig Config;
 
-	UPROPERTY(Instanced, EditAnywhere, Category = "Actions", meta=(ToolTip = "Actions to execute"))
+	UPROPERTY(Instanced, EditAnywhere, meta=(ToolTip = "Triggers that will start this event"))
+	TArray<TObjectPtr<ULWTrigger>> Triggers;
+
+	UPROPERTY(Instanced, EditAnywhere, meta=(ToolTip = "Conditions to check before starting actions"))
+	TArray<TObjectPtr<ULWCondition>> Conditions;
+
+
+	UPROPERTY(Instanced, EditAnywhere, meta=(ToolTip = "Actions to execute"))
 	TArray<TObjectPtr<ULWAction>> Actions;
 
 	UFUNCTION(BlueprintCallable, Category = "LevelWriter|EventScript")
@@ -44,7 +45,10 @@ public:
 	void Deinitialize();
 
 	UFUNCTION(BlueprintCallable, Category = "LevelWriter|EventScript")
-	void AbortScript(); 
+	void AbortScript();
+
+	UFUNCTION(BlueprintCallable, Category = "LevelWriter|EventScript")
+	void ForceExecute(AActor* Instigator);
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

@@ -197,6 +197,16 @@ void ULWEventScript::AbortScript()
 	FinishScript(false);
 }
 
+void ULWEventScript::ForceExecute(AActor* Instigator)
+{
+	if (bIsExecuting || Actions.IsEmpty()) return;
+	
+	CurrentInstigator = Instigator;
+	CurrentLoop = 0;
+	bIsExecuting = true;
+	StartIteration();
+}
+
 void ULWEventScript::ResetDoOnce()
 {
 	bWasExecuted = false;
