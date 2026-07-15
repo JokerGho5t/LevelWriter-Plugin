@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "LevelWriter",
+	"Description": "This plugin implements a simple event scripting system at a level",
+	"Category": "Gameplay",
+	"CreatedBy": "maxmin10",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "LevelWriter",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

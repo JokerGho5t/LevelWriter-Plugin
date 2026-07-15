@@ -1,0 +1,19 @@
+# ===================================================================
+# Unreal Engine Plugin .gitignore
+# ===================================================================
+
+Binaries/
+Intermediate/
+DerivedDataCache/
+
+.vs/
+.idea/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.pdb
+*.obj
+*.dll
+.DS_Store
+Thumbs.db
